@@ -2,11 +2,16 @@ from flask import Flask, render_template, request, redirect
 from werkzeug.utils import secure_filename
 import os
 
+
+from ml_model import givePredict
+
 app = Flask(__name__)
 app.config['IMAGE_UPLOADS'] = "static/uploads"
 app.secret_key = "secretket1234fornm5678"
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
+RESULT = []
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
@@ -20,7 +25,6 @@ def get_image():
 
 
         # print(request.files('file'))
-        print("INGA VANTHUDUCHU")
         file = request.files['file']
 
         if file.filename == '':
@@ -34,7 +38,16 @@ def get_image():
         # basedir = os.path.abspath(os.path.dirname(__file__))
             file.save(os.path.join(app.config['IMAGE_UPLOADS'],filename))
             print('Image successfully uploaded')
-            return render_template('confirm.html')
+            
+            # result = 'SAI MUKESH'
+            
+            result = givePredict(filename)
+
+            RESULT.append(filename)
+            RESULT.append(result)
+            
+            
+            return render_template('confirm.html', filename = RESULT)
 
         else:
             print("Not in allowed types")
@@ -43,4 +56,5 @@ def get_image():
         return render_template("index.html")
 
 if __name__ == "__main__":
+    # getdir()
     app.run(debug=True)
